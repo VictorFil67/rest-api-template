@@ -20,6 +20,20 @@ const userSchema = new Schema(
       minlength: [6, "Password mast have at least 6 characters"],
       required: [true, "Password is required"],
     },
+    accessToken: {
+      type: String,
+      default: "",
+    },
+    // tokens: {
+    //     accessToken: {
+    //       type: String,
+    //       default: "",
+    //     },
+    //     refreshToken: {
+    //       type: String,
+    //       default: "",
+    //     },
+    //   },
   },
   { versionKey: false }
 );

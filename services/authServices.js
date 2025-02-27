@@ -11,3 +11,12 @@ export const register = async (data) => {
   const hashPassword = await bcrypt.hash(password, 10);
   return User.create({ ...data, password: hashPassword });
 };
+
+export function setToken(id, accessToken = "") {
+  return User.findByIdAndUpdate(id, { accessToken }, { new: true });
+}
+
+export const setTokens = (id, accessToken = "", refreshToken = "") => {
+  const tokens = { accessToken, refreshToken };
+  return User.findByIdAndUpdate(id, { tokens }, { new: true });
+};
