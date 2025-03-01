@@ -4,6 +4,6 @@ export function findUser(params) {
   return User.findOne(params);
 }
 
-export function findUserById(id) {
-  return User.findById(id);
+export function findUserById(id, config) {
+  return User.findById(id, config);
 }

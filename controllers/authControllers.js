@@ -20,18 +20,20 @@ const signup = async (req, res) => {
     throw HttpError(409, "This email is already in use");
   }
 
-  const newUser = await register(req.body);
+  const { name, email: newEmail } = await register(req.body);
+  const newUser = { name, email: newEmail };
   res.status(201).json(newUser);
 };
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
-  const user = await findUser({ email });
-  if (!user) {
+  const existedUser = await findUser({ email });
+  console.log("existedUser: ", existedUser);
+  if (!existedUser) {
     throw HttpError(401, "Email is wrong");
   }
-  const { password: hashPassword, _id } = user;
-  const compare = bcrypt.compare(password, hashPassword);
+  const { password: hashPassword, _id } = existedUser;
+  const compare = await bcrypt.compare(password, hashPassword);
   if (!compare) {
     throw HttpError(401, "Password is wrong");
   }
@@ -45,9 +47,9 @@ const signin = async (req, res) => {
   //   const refreshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
   //   await setTokens(_id, accessToken, refreshToken);
 
-  const loggedInUser = await findUserById(_id, "-password");
-  console.log("loggedInUser: ", loggedInUser);
-  res.status(200).json({ loggedInUser, accessToken });
+  const user = await findUserById(_id, "-password -accessToken");
+  console.log("user: ", user);
+  res.status(200).json({ user, accessToken });
 };
 
 const logout = async (req, res) => {
@@ -58,9 +60,10 @@ const logout = async (req, res) => {
 };
 
 const getCurrent = async (req, res) => {
-  const { name, email } = req.user;
-  const user = { name, email };
-  res.json(user);
+  const { _id, name, email, accessToken } = req.user;
+  const user = { _id, name, email };
+
+  res.json({ user, accessToken });
 };
 
 export default {
